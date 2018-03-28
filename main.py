@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 
 @app.route("/", methods=["GET", "POST"])
-def wechat():
+def Wechat():
     if request.method == 'GET':
 
         if len(request.args) < 4:
@@ -39,52 +39,52 @@ def wechat():
             if MsgType == 'event':
                 Event = xml.find("Event").text
                 if Event == 'subscribe':
-                    return reply_text(FromUserName, ToUserName, "感谢您的关注！｡:.ﾟヽ(*´∀`)ﾉﾟ.:")
+                    return ReplyText(FromUserName, ToUserName, "感谢您的关注！｡:.ﾟヽ(*´∀`)ﾉﾟ.:")
                 elif Event == 'unsubscribe':
-                    delete_user(FromUserName)
-                    return reply_text(FromUserName, ToUserName, "")
+                    DeleteUser(FromUserName)
+                    return ReplyText(FromUserName, ToUserName, "")
             elif MsgType == 'text':
                 Content = xml.find("Content").text
-                return select(Content,FromUserName,ToUserName)
+                return RecognizeText(Content,FromUserName,ToUserName)
             elif MsgType=='voice':
                 Content =xml.find("Recongnition").text
-                return select(Content,FromUserName,ToUserName)
+                return RecognizeText(Content,FromUserName,ToUserName)
             else:
-                return reply_text(FromUserName, ToUserName, "我不明白你的意思")
+                return ReplyText(FromUserName, ToUserName, "我不明白你的意思")
         else:
             abort(403)
 
 
-def reply_text(ToUser, FromUser, Content):
-    text_reply = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"
-    response = make_response(text_reply % (ToUser, FromUser, str(int(time.time())), Content))
+def ReplyText(ToUser, FromUser, Content):
+    text = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"
+    response = make_response(text % (ToUser, FromUser, str(int(time.time())), Content))
     response.content_type = 'application/xml'
     return response
 
-def select(Content,FromUserName,ToUserName):
+def RecognizeText(Content,FromUserName,ToUserName):
     if (re.match(u'绑定', Content) != None):
         try:
             index = Content.find("+", 3)
             Username = Content[3:index]
             Password = Content[index + 1:]
-            return reply_text(FromUserName, ToUserName, add_user(FromUserName, Username, Password))
+            return ReplyText(FromUserName, ToUserName, AddUser(FromUserName, Username, Password))
         except:
-            return reply_text(FromUserName, ToUserName, "输入错误,请重新输入")
+            return ReplyText(FromUserName, ToUserName, "输入错误,请重新输入")
     elif (re.match(u'查分', Content) != None) and (len(Content) == 2):
-        return reply_text(FromUserName, ToUserName, get_grede(FromUserName))
+        return ReplyText(FromUserName, ToUserName, GetGrades(FromUserName))
     elif (re.match(u'解绑', Content) != None) and (len(Content) == 2):
-        return reply_text(FromUserName, ToUserName, delete_user(FromUserName))
+        return ReplyText(FromUserName, ToUserName, DeleteUser(FromUserName))
     elif (re.match(u'历史成绩', Content) != None) and (len(Content) == 4):
-        return reply_text(FromUserName, ToUserName, get_history_grede(FromUserName))
+        return ReplyText(FromUserName, ToUserName, GetHistoryGrades(FromUserName))
     else:
-        return reply_text(FromUserName, ToUserName, chat(Content, FromUserName))
+        return ReplyText(FromUserName, ToUserName, ChatWithTuling(Content, FromUserName))
 
 
 def Auth(query):
     signature = query.get('signature', '')
     timestamp = query.get('timestamp', '')
     nonce = query.get('nonce', '')
-    token = Wechattoken
+    token = WechatToken
     s = [timestamp, nonce, token]
     s.sort()
     s = ''.join(s)

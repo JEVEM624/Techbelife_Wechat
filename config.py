@@ -1,3 +1,3 @@
 
-Wechattoken=''
-TulingapiKey=''
+WechatToken=''
+TulingApiKey=''

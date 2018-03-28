@@ -17,10 +17,10 @@ cursor = conn.cursor()
 
 
 
-def add_user(openid,username,password):
+def AddUser(openid,username,password):
 
 
-    status=check_user(openid,username,password)
+    status=CheckUser(openid,username,password)
     if(status==0):
         cursor.execute("INSERT INTO user (OpenID,Username,Password) VALUES (?,?,?)",(openid, username, password))
         conn.commit()
@@ -31,8 +31,7 @@ def add_user(openid,username,password):
     elif(status==2):
         return "此帐号已绑定，请先解绑"
 
-
-def check_user(openid,username,password):
+def CheckUser(openid,username,password):
     cursor.execute("SELECT * FROM user WHERE OPENID==?",[openid]);
     row = cursor.fetchone()
     if row != None:
@@ -47,7 +46,7 @@ def check_user(openid,username,password):
         return int(code)
 
 
-def login(openid):
+def Login(openid):
     cursor.execute("SELECT * FROM user WHERE OPENID==?" , [openid])
     #print random.randrange(1, 100)
     row = cursor.fetchone()
@@ -70,8 +69,8 @@ def login(openid):
             return code,'','',''
 
 
-def get_grede(openid):
-    status,aspxauth,userObjFullName,role=login(openid)
+def GetGrades(openid):
+    status,aspxauth,userObjFullName,role=Login(openid)
     if(status==1):
         return '查询失败，请重新绑定'
     else:
@@ -92,8 +91,8 @@ def get_grede(openid):
 
         return result
 
-def get_history_grede(openid):
-    status,aspxauth,userObjFullName,role=login(openid)
+def GetHistoryGrades(openid):
+    status,aspxauth,userObjFullName,role=Login(openid)
     if(status==1):
         return '查询失败，请重新绑定'
     else:
@@ -114,7 +113,7 @@ def get_history_grede(openid):
 
         return result
 
-def delete_user(openid):
+def DeleteUser(openid):
     cursor.execute("SELECT * FROM user WHERE OPENID==?" , [openid]);
     row=cursor.fetchone()
     if row==None:
@@ -125,8 +124,8 @@ def delete_user(openid):
         #cache.delete_memoized('get_gread',openid)
         return '解绑成功'
 
-def get_schedule(openid):
-    status, aspxauth, userObjFullName, role = login(openid)
+def GetSchedules(openid):
+    status, aspxauth, userObjFullName, role = Login(openid)
     if (status == 1):
         return '查询失败，请重新绑定'
     else:

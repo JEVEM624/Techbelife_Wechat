@@ -8,10 +8,10 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-def chat(Content,Openid):
+def ChatWithTuling(Content,Openid):
 
     inputText = {'text': Content}
-    userInfo = {'apiKey': TulingapiKey, 'userId': Openid}
+    userInfo = {'apiKey': TulingApiKey, 'userId': Openid}
     perception = {'inputText': inputText}
     data = {'perception': perception, 'userInfo': userInfo}
     url = 'http://openapi.tuling123.com/openapi/api/v2'
