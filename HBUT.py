@@ -4,16 +4,16 @@ import sqlite3
 import json
 import requests
 from config  import *
-
+import datetime
 import sys
+import re
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-#cache = Cache()
-#cache = Cache(config={'CACHE_TYPE': 'simple'})
+
 conn = sqlite3.connect('user.db')
 cursor = conn.cursor()
-#cursor.execute('create table user (OpenID Text primary key, Username Text,Password Text)')
+
 
 
 
@@ -45,7 +45,6 @@ def CheckUser(openid,username,password):
         code = text["Status"]
         return int(code)
 
-
 def Login(openid):
     cursor.execute("SELECT * FROM user WHERE OPENID==?" , [openid])
     #print random.randrange(1, 100)
@@ -68,7 +67,6 @@ def Login(openid):
         elif code == 1:
             return code,'','',''
 
-
 def GetGrades(openid):
     status,aspxauth,userObjFullName,role=Login(openid)
     if(status==1):
@@ -79,7 +77,6 @@ def GetGrades(openid):
         s.cookies['.ASPXAUTH'] = aspxauth
         s.cookies['Role'] = role
         s.cookies['userObjFullName'] = userObjFullName
-        # print s.cookies
         r = s.get("http://run.hbut.edu.cn/StuGrade/IndexRecentSemesterForJson")
         k = r.text
         k = k.replace("\\", "")
@@ -125,6 +122,7 @@ def DeleteUser(openid):
         return '解绑成功'
 
 def GetSchedules(openid):
+    beginday=datetime.date(2018,3,4)
     status, aspxauth, userObjFullName, role = Login(openid)
     if (status == 1):
         return '查询失败，请重新绑定'
@@ -133,14 +131,53 @@ def GetSchedules(openid):
         s.cookies['.ASPXAUTH'] = aspxauth
         s.cookies['Role'] = role
         s.cookies['userObjFullName'] = userObjFullName
-        # print s.cookies
-        r = s.get("http://run.hbut.edu.cn/ArrangeTask/MyselfScheduleForJson/")
+        r = s.get("http://run.hbut.edu.cn/ArrangeTask/MyselfScheduleForJson")
         k = r.text
         k = k.replace("\\", "")
         k = k[1:-1]
         text = json.loads(k)
-        result ="今天的课表如下:\n"
-        for i in text["TimeScheduleList"]:
-            result = result + str(i["CourseName"]) + ":" + str(i["Grade"]) + '\n'
+        class_list = text["TimeScheduleList"]
+
+        dayList = []
+        classList = []
+        today =datetime.date.today()
+
+        dayofweek=today.weekday()+1
+        week=int((today-beginday).days)/7+1
+
+
+        for i in range(len(class_list)):
+            if class_list[i]["Day"] == dayofweek:
+                dayList.append(class_list[i])
+        for Class in dayList:
+            timeString = Class["Week"]
+            times = re.findall("\d+\-\d+|\d+", timeString)
+            for time in times:
+                if time.find('-') != -1:
+                    begin, end = time.split('-')
+                    begin = int(begin)
+                    end = int(end)
+                    if week <= end and week >= begin:
+                        classList.append(Class)
+                else:
+                    if week == int(time):
+                        classList.append(Class)
+        classList.sort(key=lambda a: a['DayTime'])
+
+        result=""
+        for Classes in classList:
+
+            if(Classes["DayTime"]==1):
+                result=result+'8:20-9:55'+'\n'
+            elif (Classes["DayTime"] == 2):
+                result = result + '10:15-11:50' + '\n'
+            elif (Classes["DayTime"] == 3):
+                result = result + '14:00-15:35' + '\n'
+            elif (Classes["DayTime"] == 4):
+                result = result + '15:55-17:30' + '\n'
+            elif (Classes["DayTime"] == 5):
+                result = result + '18:30-20:55' + '\n'
+
+            result=result+str(Classes["CurName"])+'\n'+str(Classes["Place"])+'\n'+str(Classes["Teacher"])+'\n\n'
 
         return result

@@ -70,6 +70,8 @@ def RecognizeText(Content,FromUserName,ToUserName):
             return ReplyText(FromUserName, ToUserName, AddUser(FromUserName, Username, Password))
         except:
             return ReplyText(FromUserName, ToUserName, "输入错误,请重新输入")
+    elif (re.match(u'课表', Content) != None) and (len(Content) == 2):
+        return ReplyText(FromUserName, ToUserName, GetSchedules(FromUserName))
     elif (re.match(u'查分', Content) != None) and (len(Content) == 2):
         return ReplyText(FromUserName, ToUserName, GetGrades(FromUserName))
     elif (re.match(u'解绑', Content) != None) and (len(Content) == 2):
