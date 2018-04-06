@@ -177,7 +177,7 @@ def GetSchedules(openid):
                         classList.append(Class)
         classList.sort(key=lambda a: a['DayTime'])
 
-        result=[]
+        result=['今天的课表如下:\n']
         for Classes in classList:
 
             if(Classes["DayTime"]==1):
