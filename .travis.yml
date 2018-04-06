@@ -1,0 +1,12 @@
+language: python
+sudo: required
+python:
+  - 2.7
+install:
+  - pip install -r requirements.txt
+script:
+  - sudo chmod a+x run.sh stop.sh
+  - ./run.sh
+  - python HBUT.py
+  - python ChatRobot.py
+  - python config.py

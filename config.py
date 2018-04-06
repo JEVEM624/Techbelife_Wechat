@@ -1,4 +1,4 @@
 import datetime
 WechatToken=''
 TulingApiKey=''
-beginday=datetime.date()#YYYY,MM,DD
+BeginDay=datetime.date(2018,3,4)#YYYY,MM,DD

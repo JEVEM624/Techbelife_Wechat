@@ -2,7 +2,7 @@
 from flask import Flask, request, make_response, abort
 import hashlib
 from HBUT import *
-from CharRobot import *
+from ChatRobot import *
 import xml.etree.ElementTree as ET
 import time
 import sys
