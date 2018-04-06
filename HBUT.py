@@ -82,10 +82,17 @@ def GetGrades(openid):
         k = k.replace("\\", "")
         k = k[1:-1]
         text = json.loads(k)
-        result = text["Title"] + '\n' + '平均绩点:' + str(text["AverageGradePoint"]) + '\n'
+        result = []
+        result.append(text["Title"])
+        result.append('\n平均绩点:')
+        result.append(str(text["AverageGradePoint"]))
+        result.append('\n')
         for i in text["StuGradeList"]:
-            result = result + str(i["CourseName"]) + ":" + str(i["Grade"]) + '\n'
-
+            result.append(str(i["CourseName"]))
+            result.append(u':')
+            result.append(str(i["Grade"]))
+            result.append('\n')
+        result = ''.join(result)
         return result
 
 def GetHistoryGrades(openid):
@@ -104,10 +111,17 @@ def GetHistoryGrades(openid):
         k = k.replace("\\", "")
         k = k[1:-1]
         text = json.loads(k)
-        result = text["Title"] + '\n' + '平均绩点:' + str(text["AverageGradePoint"]) + '\n'
+        result=[]
+        result.append(text["Title"])
+        result.append('\n平均绩点:')
+        result.append(str(text["AverageGradePoint"]))
+        result.append('\n')
         for i in text["StuGradeList"]:
-            result = result + str(i["CourseName"]) + ":" + str(i["Grade"]) + '\n'
-
+            result .append(str(i["CourseName"]))
+            result.append(u':')
+            result.append(str(i["Grade"]))
+            result.append('\n')
+        result=''.join(result)
         return result
 
 def DeleteUser(openid):
@@ -122,7 +136,6 @@ def DeleteUser(openid):
         return '解绑成功'
 
 def GetSchedules(openid):
-    beginday=datetime.date(2018,3,4)
     status, aspxauth, userObjFullName, role = Login(openid)
     if (status == 1):
         return '查询失败，请重新绑定'
@@ -143,7 +156,7 @@ def GetSchedules(openid):
         today =datetime.date.today()
 
         dayofweek=today.weekday()+1
-        week=int((today-beginday).days)/7+1
+        week=int((today-BeginDay).days)/7+1
 
 
         for i in range(len(class_list)):
@@ -164,20 +177,24 @@ def GetSchedules(openid):
                         classList.append(Class)
         classList.sort(key=lambda a: a['DayTime'])
 
-        result=""
+        result=[]
         for Classes in classList:
 
             if(Classes["DayTime"]==1):
-                result=result+'8:20-9:55'+'\n'
+                result.append('8:20-9:55\n')
             elif (Classes["DayTime"] == 2):
-                result = result + '10:15-11:50' + '\n'
+                result.append('10:15-11:50\n')
             elif (Classes["DayTime"] == 3):
-                result = result + '14:00-15:35' + '\n'
+                result.append('14:00-15:35\n')
             elif (Classes["DayTime"] == 4):
-                result = result + '15:55-17:30' + '\n'
+                result.append('15:55-17:30\n')
             elif (Classes["DayTime"] == 5):
-                result = result + '18:30-20:55' + '\n'
-
-            result=result+str(Classes["CurName"])+'\n'+str(Classes["Place"])+'\n'+str(Classes["Teacher"])+'\n\n'
-
+                result.append('18:30-20:55\n')
+            result.append(str(Classes["CurName"]))
+            result.append('\n')
+            result.append(str(Classes["Place"]))
+            result.append('\n')
+            result.append(str(Classes["Teacher"]))
+            result.append('\n\n')
+        result=''.join(result)
         return result
