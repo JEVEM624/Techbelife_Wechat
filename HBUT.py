@@ -162,6 +162,8 @@ def GetSchedules(openid):
         for i in range(len(class_list)):
             if class_list[i]["Day"] == dayofweek:
                 dayList.append(class_list[i])
+        if len(dayList)==0:
+            return "今天没有课哟"
         for Class in dayList:
             timeString = Class["Week"]
             times = re.findall("\d+\-\d+|\d+", timeString)
@@ -179,7 +181,6 @@ def GetSchedules(openid):
 
         result=['今天的课表如下:\n']
         for Classes in classList:
-
             if(Classes["DayTime"]==1):
                 result.append('8:20-9:55\n')
             elif (Classes["DayTime"] == 2):
