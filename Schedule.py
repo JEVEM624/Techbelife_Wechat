@@ -50,7 +50,9 @@ class Schedule:
 
     def getSchedule(self):
         now = (datetime.date.today()-datetime.date(self.StartDay[0],self.StartDay[1],self.StartDay[2])).days
-        now_week = now/7+1
+        #python2   now_week = now/7+1
+        #python3
+        now_week = now//7+1
         now_day = now%7+1
         Classes = self.getClass(now_day,now_week)
         return Classes
