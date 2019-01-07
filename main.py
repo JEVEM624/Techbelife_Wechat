@@ -62,24 +62,27 @@ def ReplyText(ToUser, FromUser, Content):
     return response
 
 def RecognizeText(Content,FromUserName,ToUserName):
-    if (re.match(u'绑定', Content) != None):
-        try:
-            index = Content.find("+", 3)
-            Username = Content[3:index]
-            Password = Content[index + 1:]
-            return ReplyText(FromUserName, ToUserName, AddUser(FromUserName, Username, Password))
-        except:
-            return ReplyText(FromUserName, ToUserName, "输入错误,请重新输入")
-    elif (re.match(u'课表', Content) != None) and (len(Content) == 2):
-        return ReplyText(FromUserName, ToUserName, GetSchedules(FromUserName))
-    elif (re.match(u'查分', Content) != None) and (len(Content) == 2):
-        return ReplyText(FromUserName, ToUserName, GetGrades(FromUserName))
-    elif (re.match(u'解绑', Content) != None) and (len(Content) == 2):
-        return ReplyText(FromUserName, ToUserName, DeleteUser(FromUserName))
-    elif (re.match(u'历史成绩', Content) != None) and (len(Content) == 4):
-        return ReplyText(FromUserName, ToUserName, GetHistoryGrades(FromUserName))
-    else:
-        return ReplyText(FromUserName, ToUserName, ChatWithTuling(Content, FromUserName))
+    try:
+        if (re.match(u'绑定', Content) != None):
+            try:
+                index = Content.find("+", 3)
+                Username = Content[3:index]
+                Password = Content[index + 1:]
+                return ReplyText(FromUserName, ToUserName, AddUser(FromUserName, Username, Password))
+            except:
+                return ReplyText(FromUserName, ToUserName, "输入错误,请重新输入")
+        elif (re.match(u'课表', Content) != None) and (len(Content) == 2):
+            return ReplyText(FromUserName, ToUserName, GetSchedules(FromUserName))
+        elif (re.match(u'查分', Content) != None) and (len(Content) == 2):
+            return ReplyText(FromUserName, ToUserName, GetGrades(FromUserName))
+        elif (re.match(u'解绑', Content) != None) and (len(Content) == 2):
+            return ReplyText(FromUserName, ToUserName, DeleteUser(FromUserName))
+        elif (re.match(u'历史成绩', Content) != None) and (len(Content) == 4):
+            return ReplyText(FromUserName, ToUserName, GetHistoryGrades(FromUserName))
+        else:
+            return ReplyText(FromUserName, ToUserName, ChatWithTuling(Content, FromUserName))
+    except BaseException:
+        return ReplyText(FromUserName,ToUserName,"服务器正忙,请稍候重试")
 
 
 def Auth(query):
